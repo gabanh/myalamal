@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة الأمل - التقويم المدرسي 2025-2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .calendar-day {
+            min-height: 100px;
+        }
+        
+        .calendar-day:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .event {
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            margin-bottom: 2px;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .event-exam {
+            background-color: #fee2e2;
+            border-right: 3px solid #ef4444;
+        }
+        
+
+        
+        .event-school {
+            background-color: #d1fae5;
+            border-right: 3px solid #10b981;
+        }
+        
+        .event-trip {
+            background-color: #fef3c7;
+            border-right: 3px solid #f59e0b;
+        }
+        
+        .day-name {
+            font-weight: 500;
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        
+        .grade-filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        @media (max-width: 640px) {
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+                padding: 2px !important;
+            }
+            
+            .day-number {
+                font-size: 0.8rem;
+            }
+            
+            .event {
+                font-size: 0.7rem;
+                padding: 1px 2px;
+            }
+        }
+        
+        /* أنماط العرض السنوي */
+        .year-view-container {
+            width: 100%;
+            max-width: none;
+        }
+        
+        .year-month {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 4px;
+            background: white;
+            page-break-inside: avoid;
+        }
+        
+        .compact-month {
+            min-width: 180px;
+        }
+        
+        .year-month-header {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 4px;
+            padding: 2px;
+            background: #f3f4f6;
+            border-radius: 3px;
+            font-size: 0.75rem;
+        }
+        
+        .compact-header {
+            font-size: 0.7rem;
+            padding: 1px;
+            margin-bottom: 2px;
+        }
+        
+        .year-month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5px;
+            font-size: 0.6rem;
+        }
+        
+        .compact-grid {
+            gap: 0.25px;
+            font-size: 0.55rem;
+        }
+        
+        .year-day-header {
+            text-align: center;
+            font-weight: 500;
+            padding: 1px;
+            background: #f9fafb;
+            font-size: 0.5rem;
+            min-height: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .compact-day-header {
+            font-size: 0.45rem;
+            min-height: 10px;
+            padding: 0.5px;
+        }
+        
+        .year-day {
+            min-height: 16px;
+            padding: 0.5px;
+            text-align: center;
+            position: relative;
+            border: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+        }
+        
+        .year-day.other-month {
+            color: #d1d5db;
+            background: #f9fafb;
+        }
+        
+        .year-day.has-events {
+            background: #dbeafe;
+            font-weight: 600;
+        }
+        
+        .year-day.has-events::after {
+            content: '';
+            position: absolute;
+            bottom: 0.5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 50%;
+        }
+        
+        .year-event-count {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            font-size: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        @media (max-width: 1024px) {
+            .year-view-container {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 4px;
+            }
+            
+            .compact-month {
+                min-width: 150px;
+            }
+            
+            .year-month-grid {
+                font-size: 0.55rem;
+            }
+            
+            .compact-grid {
+                font-size: 0.5rem;
+            }
+            
+            .year-day {
+                min-height: 14px;
+                font-size: 0.5rem;
+            }
+            
+            .year-event-count {
+                width: 9px;
+                height: 9px;
+                font-size: 0.35rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .year-view-container {
+                grid-template-columns: repeat(1, 1fr) !important;
+                gap: 6px;
+            }
+            
+            .compact-month {
+                min-width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .year-month-grid {
+                font-size: 0.6rem;
+            }
+            
+            .year-day {
+                min-height: 18px;
+                font-size: 0.55rem;
+            }
+        }
+        
+        /* أنماط الطباعة */
+        @media print {
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .print-only {
+                display: block !important;
+            }
+            
+            .container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .calendar-day {
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid;
+            }
+            
+            .calendar-grid {
+                page-break-after: always;
+            }
+            
+            .print-header {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            
+            .print-footer {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 0.7rem;
+                color: #666;
+            }
+            
+            .print-info {
+                margin-bottom: 8px;
+                font-size: 0.7rem;
+            }
+            
+            /* تحسين مظهر الأحداث عند الطباعة */
+            .event {
+                border: 1px solid #ccc !important;
+                margin-bottom: 3px !important;
+                page-break-inside: avoid;
+            }
+            
+            /* تحسين مظهر عرض القائمة عند الطباعة */
+            #listView .py-2 {
+                background-color: #f3f4f6 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            #listView .py-3 {
+                border-bottom: 1px solid #ddd;
+            }
+            
+            /* أنماط طباعة العرض السنوي - مُحسَّنة لـ A3 أفقي */
+            @page {
+                size: A3 landscape;
+                margin: 0.3cm;
+            }
+            
+            /* منع تقسيم الصفحات في العرض السنوي */
+            #yearView {
+                page-break-inside: avoid !important;
+                page-break-before: auto !important;
+                page-break-after: auto !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            
+            #yearView .year-view-container {
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 4px !important;
+                width: 100% !important;
+                max-width: none !important;
+                page-break-inside: avoid !important;
+                height: auto !important;
+                display: grid !important;
+            }
+            
+            #yearView .year-month {
+                border: 1px solid #000 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                margin-bottom: 0 !important;
+                padding: 2px !important;
+                min-width: auto !important;
+                width: 100% !important;
+                height: auto !important;
+                box-sizing: border-box !important;
+            }
+            
+            #yearView .year-month-header {
+                background-color: #f3f4f6 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 0.55rem !important;
+                padding: 1px !important;
+                margin-bottom: 1px !important;
+                font-weight: 600 !important;
+            }
+            
+            #yearView .year-month-grid {
+                gap: 0.2px !important;
+                font-size: 0.4rem !important;
+                display: grid !important;
+                grid-template-columns: repeat(7, 1fr) !important;
+            }
+            
+            #yearView .year-day-header {
+                font-size: 0.35rem !important;
+                min-height: 6px !important;
+                padding: 0.2px !important;
+                background-color: #f9fafb !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                text-align: center !important;
+                font-weight: 500 !important;
+            }
+            
+            #yearView .year-day {
+                min-height: 10px !important;
+                font-size: 0.4rem !important;
+                padding: 0.2px !important;
+                border: 0.3px solid #e5e7eb !important;
+                text-align: center !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                position: relative !important;
+            }
+            
+            #yearView .year-day.has-events {
+                background-color: #dbeafe !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-weight: 700 !important;
+            }
+            
+            #yearView .year-day.has-events::after {
+                background-color: #3b82f6 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                width: 1.5px !important;
+                height: 1.5px !important;
+                bottom: 0.2px !important;
+                content: '' !important;
+                position: absolute !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                border-radius: 50% !important;
+            }
+            
+            #yearView .year-event-count {
+                background-color: #ef4444 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                width: 6px !important;
+                height: 6px !important;
+                font-size: 0.3rem !important;
+                top: -0.3px !important;
+                right: -0.3px !important;
+                position: absolute !important;
+                border-radius: 50% !important;
+                color: white !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-weight: bold !important;
+                line-height: 1 !important;
+            }
+            
+            #yearView .year-day.other-month {
+                color: #d1d5db !important;
+                background-color: #f9fafb !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            /* إخفاء عناصر غير ضرورية في الطباعة */
+            #yearView .no-print {
+                display: none !important;
+            }
+            
+            /* تحسين العنوان الرئيسي للطباعة */
+            .print-header h1 {
+                font-size: 1.4rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+            
+            .print-header div {
+                font-size: 1rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+            
+            .print-info {
+                font-size: 0.65rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+            
+            .print-info div {
+                margin-bottom: 0.1rem !important;
+            }
+            
+            /* ضمان عدم تقسيم المحتوى */
+            * {
+                page-break-inside: avoid !important;
+            }
+            
+            .year-view-container > * {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <h1 class="text-3xl font-bold text-center mb-6">مدرسة الأمل - التقويم المدرسي 2025-2026</h1>
+        
+        <!-- التصفية والعرض -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6 no-print">
+            <div class="flex flex-wrap justify-between items-center mb-4">
+                <div class="flex space-x-reverse space-x-2 mb-2 sm:mb-0">
+                    <button id="prevBtn" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button id="todayBtn" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">اليوم</button>
+                    <button id="nextBtn" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h2 id="currentMonthYear" class="text-xl font-bold px-2"></h2>
+                </div>
+                
+                <div class="flex space-x-reverse space-x-2">
+                    <button id="printBtn" class="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 ml-2">
+                        <i class="fas fa-print ml-1"></i>طباعة
+                    </button>
+                    <button id="addEventBtn" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 ml-2">
+                        <i class="fas fa-plus ml-1"></i>إضافة حدث
+                    </button>
+                    <button id="monthViewBtn" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 view-btn active">شهري</button>
+                    <button id="weekViewBtn" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 view-btn">أسبوعي</button>
+                    <button id="yearViewBtn" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 view-btn">سنوي</button>
+                    <button id="listViewBtn" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 view-btn">قائمة</button>
+                </div>
+            </div>
+            
+            <!-- فلاتر متقدمة -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center space-x-reverse space-x-2">
+                        <label for="monthFilter" class="text-sm font-medium text-gray-700">الشهر:</label>
+                        <select id="monthFilter" class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">جميع الأشهر</option>
+                            <option value="8">سبتمبر 2025</option>
+                            <option value="9">أكتوبر 2025</option>
+                            <option value="10">نوفمبر 2025</option>
+                            <option value="11">ديسمبر 2025</option>
+                            <option value="0">يناير 2026</option>
+                            <option value="1">فبراير 2026</option>
+                            <option value="2">مارس 2026</option>
+                            <option value="3">أبريل 2026</option>
+                            <option value="4">مايو 2026</option>
+                            <option value="5">يونيو 2026</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center space-x-reverse space-x-2">
+                        <label for="categoryFilter" class="text-sm font-medium text-gray-700">نوع الحدث:</label>
+                        <select id="categoryFilter" class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">جميع الأحداث</option>
+                            <option value="exam">امتحانات فقط</option>
+                            <option value="school">أحداث مدرسية فقط</option>
+                            <option value="trip">رحلات/أنشطة فقط</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center space-x-reverse space-x-2">
+                        <label for="gradeFilter" class="text-sm font-medium text-gray-700">الصف:</label>
+                        <select id="gradeFilter" class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">جميع الصفوف</option>
+                            <option value="1">الصف الأول</option>
+                            <option value="2">الصف الثاني</option>
+                            <option value="3">الصف الثالث</option>
+                            <option value="4">الصف الرابع</option>
+                            <option value="5">الصف الخامس</option>
+                            <option value="6">الصف السادس</option>
+                            <option value="7">الصف السابع</option>
+                            <option value="8">الصف الثامن</option>
+                            <option value="9">الصف التاسع</option>
+                        </select>
+                    </div>
+                    
+                    <button id="resetFiltersBtn" class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 text-sm">
+                        <i class="fas fa-undo ml-1"></i>إعادة تعيين
+                    </button>
+                    
+                    <div id="filterStatus" class="text-sm text-gray-600 bg-white px-2 py-1 rounded border">
+                        <span id="eventCount">0</span> حدث
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap justify-between items-start">
+                <div class="mb-4 w-full lg:w-auto">
+                    <div class="font-bold mb-2">الصف:</div>
+                    <div class="grade-filter-container">
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="all" checked>
+                            <span class="mr-1">الكل</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="1" checked>
+                            <span class="mr-1">الأول</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="2" checked>
+                            <span class="mr-1">الثاني</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="3" checked>
+                            <span class="mr-1">الثالث</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="4" checked>
+                            <span class="mr-1">الرابع</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="5" checked>
+                            <span class="mr-1">الخامس</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="6" checked>
+                            <span class="mr-1">السادس</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="7" checked>
+                            <span class="mr-1">السابع</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="8" checked>
+                            <span class="mr-1">الثامن</span>
+                        </label>
+                        <label class="inline-flex items-center mr-2 mb-1">
+                            <input type="checkbox" class="form-checkbox grade-filter" value="9" checked>
+                            <span class="mr-1">التاسع</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-auto">
+                    <div class="font-bold mb-2">الأحداث:</div>
+                    <div class="flex flex-wrap">
+                        <label class="inline-flex items-center mr-4 mb-1">
+                            <input type="checkbox" class="form-checkbox event-filter" value="exam" checked>
+                            <span class="mr-1 text-red-600">امتحانات</span>
+                        </label>
+                        <label class="inline-flex items-center mr-4 mb-1">
+                            <input type="checkbox" class="form-checkbox event-filter" value="school" checked>
+                            <span class="mr-1 text-green-600">أحداث مدرسية</span>
+                        </label>
+                        <label class="inline-flex items-center mb-1">
+                            <input type="checkbox" class="form-checkbox event-filter" value="trip" checked>
+                            <span class="mr-1 text-amber-600">رحلات/أنشطة</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- عنوان الطباعة - يظهر فقط عند الطباعة -->
+        <div class="print-only hidden">
+            <div class="print-header">
+                <h1 class="text-2xl font-bold">مدرسة الأمل - التقويم المدرسي 2025-2026</h1>
+                <div id="printMonthYear" class="text-xl mt-2"></div>
+            </div>
+            <div class="print-info">
+                <div id="printGrades"></div>
+                <div id="printCategories" class="mt-1"></div>
+                <div id="printPaperSize" class="mt-1"></div>
+            </div>
+        </div>
+        
+        <!-- عرض التقويم -->
+        <div id="calendarContainer" class="bg-white rounded-lg shadow-md p-4">
+            <!-- عرض شهري -->
+            <div id="monthView" class="view-container">
+                <div class="grid grid-cols-7 gap-1 mb-2 text-center">
+                    <div class="day-name">الأحد</div>
+                    <div class="day-name">الإثنين</div>
+                    <div class="day-name">الثلاثاء</div>
+                    <div class="day-name">الأربعاء</div>
+                    <div class="day-name">الخميس</div>
+                    <div class="day-name">الجمعة</div>
+                    <div class="day-name">السبت</div>
+                </div>
+                <div id="monthGrid" class="grid grid-cols-7 gap-1 calendar-grid"></div>
+            </div>
+            
+            <!-- عرض أسبوعي -->
+            <div id="weekView" class="view-container hidden">
+                <div class="grid grid-cols-7 gap-1 mb-2 text-center">
+                    <div class="day-name">الأحد</div>
+                    <div class="day-name">الإثنين</div>
+                    <div class="day-name">الثلاثاء</div>
+                    <div class="day-name">الأربعاء</div>
+                    <div class="day-name">الخميس</div>
+                    <div class="day-name">الجمعة</div>
+                    <div class="day-name">السبت</div>
+                </div>
+                <div id="weekGrid" class="grid grid-cols-7 gap-1"></div>
+            </div>
+            
+            <!-- عرض سنوي -->
+            <div id="yearView" class="view-container hidden">
+                <div id="yearGrid" class="grid grid-cols-1 gap-6"></div>
+            </div>
+            
+            <!-- عرض القائمة -->
+            <div id="listView" class="view-container hidden">
+                <div id="eventsList" class="divide-y divide-gray-200"></div>
+            </div>
+        </div>
+        
+        <!-- تذييل الطباعة - يظهر فقط عند الطباعة -->
+        <div class="print-only hidden">
+            <div class="print-footer">
+                <p>تم إنشاء هذا التقويم بواسطة نظام التقويم المدرسي</p>
+                <p id="printDate"></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة تفاصيل الحدث -->
+    <div id="eventModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden no-print">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold"></h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modalContent" class="mb-4"></div>
+            <div id="modalDate" class="text-gray-600 mb-4"></div>
+            <div id="modalCategory" class="mb-4"></div>
+            <div id="modalGrade" class="mb-4"></div>
+            <div class="flex space-x-reverse space-x-2">
+                <button id="closeModalBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex-grow">إغلاق</button>
+                <button id="deleteEventBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">حذف</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة إضافة حدث جديد -->
+    <div id="addEventModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden no-print">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">إضافة حدث جديد</h3>
+                <button id="closeAddEventModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addEventForm" class="space-y-4">
+                <div>
+                    <label for="eventTitle" class="block text-sm font-medium text-gray-700 mb-1">عنوان الحدث*</label>
+                    <input type="text" id="eventTitle" name="eventTitle" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label for="eventDate" class="block text-sm font-medium text-gray-700 mb-1">التاريخ*</label>
+                    <input type="date" id="eventDate" name="eventDate" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label for="eventCategory" class="block text-sm font-medium text-gray-700 mb-1">نوع الحدث*</label>
+                    <select id="eventCategory" name="eventCategory" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="exam">امتحان</option>
+                        <option value="school">حدث مدرسي</option>
+                        <option value="trip">رحلة/نشاط</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">الصف*</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="all" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الكل</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="1" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الأول</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="2" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الثاني</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="3" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الثالث</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="4" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الرابع</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="5" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الخامس</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="6" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">السادس</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="7" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">السابع</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="8" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">الثامن</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="eventGrade" value="9" class="form-checkbox event-grade-checkbox">
+                            <span class="mr-1">التاسع</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="eventDescription" class="block text-sm font-medium text-gray-700 mb-1">وصف الحدث</label>
+                    <textarea id="eventDescription" name="eventDescription" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div class="flex space-x-reverse space-x-3">
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex-grow">إضافة</button>
+                    <button type="button" id="cancelAddEvent" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إعدادات الطباعة -->
+    <div id="printModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden no-print">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">إعدادات الطباعة</h3>
+                <button id="closePrintModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="printForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">محتوى الطباعة</label>
+                    <div class="space-y-2">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="printView" value="current" checked class="form-radio">
+                            <span class="mr-2">العرض الحالي فقط</span>
+                        </label>
+                        <label class="inline-flex items-center block">
+                            <input type="radio" name="printView" value="all" class="form-radio">
+                            <span class="mr-2">جميع الأحداث المفلترة</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">تضمين</label>
+                    <div class="space-y-2">
+                        <label class="inline-flex items-center block">
+                            <input type="checkbox" name="printHeader" checked class="form-checkbox">
+                            <span class="mr-2">ترويسة وتذييل</span>
+                        </label>
+                        <label class="inline-flex items-center block">
+                            <input type="checkbox" name="printEventDetails" checked class="form-checkbox">
+                            <span class="mr-2">تفاصيل الأحداث</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">حجم الخط</label>
+                    <select id="printFontSize" name="printFontSize" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="small">صغير</option>
+                        <option value="medium" selected>متوسط</option>
+                        <option value="large">كبير</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">حجم الورق</label>
+                    <select id="printPaperSize" name="printPaperSize" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="a4" selected>A4 (210 × 297 مم)</option>
+                        <option value="a3">A3 (297 × 420 مم) - حجم عادي</option>
+                        <option value="a3-full">A3 (297 × 420 مم) - استغلال كامل</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">اتجاه الصفحة</label>
+                    <div class="space-y-2">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="printOrientation" value="portrait" checked class="form-radio">
+                            <span class="mr-2">عمودي</span>
+                        </label>
+                        <label class="inline-flex items-center block">
+                            <input type="radio" name="printOrientation" value="landscape" class="form-radio">
+                            <span class="mr-2">أفقي</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-reverse space-x-3">
+                    <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 flex-grow">طباعة</button>
+                    <button type="button" id="cancelPrint" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- معاينة الطباعة -->
+    <div id="printPreviewModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden no-print">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-5xl w-full mx-4 h-5/6 flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">معاينة الطباعة</h3>
+                <button id="closePrintPreviewModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="printPreviewContent" class="flex-grow overflow-auto border border-gray-300 p-4 mb-4">
+                <!-- محتوى المعاينة سيتم إضافته هنا -->
+            </div>
+            <div class="flex space-x-reverse space-x-3">
+                <button id="confirmPrintBtn" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 flex-grow">طباعة</button>
+                <button id="backToPrintSettings" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">العودة للإعدادات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- إشعار النجاح -->
+    <div id="notification" class="fixed bottom-4 left-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300 opacity-0 hidden no-print">
+        تمت إضافة الحدث بنجاح
+    </div>
+
+    <!-- إشعار حالة التخزين -->
+    <div id="storageStatus" class="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg hidden no-print">
+        جاري حفظ البيانات...
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // بيانات الأحداث الافتراضية
+            const defaultEvents = [
+                {
+                    id: 1,
+                    title: "بدء العام الدراسي",
+                    date: new Date(2025, 8, 1), // سبتمبر 1، 2025
+                    category: "school",
+                    grade: ["all"],
+                    description: "بداية العام الدراسي الجديد 2025-2026"
+                },
+                {
+                    id: 2,
+                    title: "نفتتح أسبوعًا هادئًا - يوغا",
+                    date: new Date(2025, 8, 7), // سبتمبر 7، 2025
+                    category: "school",
+                    grade: ["all"],
+                    description: "جلسة يوغا صباحية لبداية أسبوع هادئ"
+                },
+                {
+                    id: 3,
+                    title: "نفتتح أسبوعًا هادئًا - تمارين إطالة",
+                    date: new Date(2025, 8, 14), // سبتمبر 14، 2025
+                    category: "school",
+                    grade: ["all"],
+                    description: "تمارين إطالة صباحية لبداية أسبوع هادئ"
+                },
+                {
+                    id: 4,
+                    title: "نفتتح أسبوعًا هادئًا - كلمة طيبة",
+                    date: new Date(2025, 8, 21), // سبتمبر 21، 2025
+                    category: "school",
+                    grade: ["all"],
+                    description: "نشاط كلمة طيبة لبداية أسبوع هادئ"
+                },
+                {
+                    id: 5,
+                    title: "نفتتح أسبوعًا هادئًا - أنفاس",
+                    date: new Date(2025, 8, 28), // سبتمبر 28، 2025
+                    category: "school",
+                    grade: ["all"],
+                    description: "تمارين تنفس لبداية أسبوع هادئ"
+                },
+                {
+                    id: 6,
+                    title: "امتحان اللغة الإنجليزية",
+                    date: new Date(2025, 8, 15), // سبتمبر 15، 2025
+                    category: "exam",
+                    grade: ["1", "2"],
+                    description: "امتحان في مادة اللغة الإنجليزية للصفين الأول والثاني"
+                },
+                {
+                    id: 7,
+                    title: "امتحان الرياضيات",
+                    date: new Date(2025, 8, 16), // سبتمبر 16، 2025
+                    category: "exam",
+                    grade: ["3", "4"],
+                    description: "امتحان في مادة الرياضيات للصفين الثالث والرابع"
+                },
+                {
+                    id: 8,
+                    title: "امتحان العلوم",
+                    date: new Date(2025, 8, 17), // سبتمبر 17، 2025
+                    category: "exam",
+                    grade: ["5", "6"],
+                    description: "امتحان في مادة العلوم للصفين الخامس والسادس"
+                },
+                {
+                    id: 9,
+                    title: "امتحان اللغة العربية",
+                    date: new Date(2025, 8, 18), // سبتمبر 18، 2025
+                    category: "exam",
+                    grade: ["7", "8", "9"],
+                    description: "امتحان في مادة اللغة العربية للصفوف السابع والثامن والتاسع"
+                },
+                {
+                    id: 10,
+                    title: "رحلة إلى حديقة الحيوانات",
+                    date: new Date(2025, 8, 10), // سبتمبر 10، 2025
+                    category: "trip",
+                    grade: ["1", "2", "3"],
+                    description: "رحلة تعليمية إلى حديقة الحيوانات للصفوف الأولى"
+                },
+                {
+                    id: 11,
+                    title: "زيارة المتحف العلمي",
+                    date: new Date(2025, 8, 11), // سبتمبر 11، 2025
+                    category: "trip",
+                    grade: ["4", "5", "6"],
+                    description: "زيارة تعليمية إلى المتحف العلمي للصفوف المتوسطة"
+                },
+                {
+                    id: 12,
+                    title: "رحلة استكشافية",
+                    date: new Date(2025, 8, 12), // سبتمبر 12، 2025
+                    category: "trip",
+                    grade: ["7", "8", "9"],
+                    description: "رحلة استكشافية للصفوف العليا"
+                },
+
+                {
+                    id: 13,
+                    title: "مسابقة الإملاء",
+                    date: new Date(2025, 9, 14), // أكتوبر 14، 2025
+                    category: "school",
+                    grade: ["1", "2", "3"],
+                    description: "مسابقة الإملاء للصفوف الأولى"
+                },
+                {
+                    id: 14,
+                    title: "مسابقة الخط العربي",
+                    date: new Date(2025, 9, 15), // أكتوبر 15، 2025
+                    category: "school",
+                    grade: ["4", "5", "6"],
+                    description: "مسابقة الخط العربي للصفوف المتوسطة"
+                },
+                {
+                    id: 15,
+                    title: "مسابقة العلوم",
+                    date: new Date(2025, 9, 16), // أكتوبر 16، 2025
+                    category: "school",
+                    grade: ["7", "8", "9"],
+                    description: "مسابقة العلوم للصفوف العليا"
+                }
+            ];
+
+            // نظام تخزين متعدد الطبقات - يدعم localStorage وsessionStorage والذاكرة المؤقتة
+            const Storage = {
+                // اختبار إذا كان localStorage متاحًا
+                isLocalStorageAvailable: function() {
+                    try {
+                        const test = 'test';
+                        localStorage.setItem(test, test);
+                        localStorage.removeItem(test);
+                        return true;
+                    } catch(e) {
+                        return false;
+                    }
+                },
+                
+                // اختبار إذا كان sessionStorage متاحًا
+                isSessionStorageAvailable: function() {
+                    try {
+                        const test = 'test';
+                        sessionStorage.setItem(test, test);
+                        sessionStorage.removeItem(test);
+                        return true;
+                    } catch(e) {
+                        return false;
+                    }
+                },
+                
+                // تخزين البيانات باستخدام أفضل طريقة متاحة
+                save: function(key, value) {
+                    try {
+                        // عرض حالة التخزين
+                        this.showStatus('جاري حفظ البيانات...');
+                        
+                        // تحويل القيمة إلى سلسلة نصية
+                        const serializedValue = JSON.stringify(value);
+                        
+                        // محاولة استخدام localStorage
+                        if (this.isLocalStorageAvailable()) {
+                            localStorage.setItem(key, serializedValue);
+                            this.showStatus('تم حفظ البيانات بنجاح', 'success');
+                            return true;
+                        }
+                        
+                        // محاولة استخدام sessionStorage
+                        if (this.isSessionStorageAvailable()) {
+                            sessionStorage.setItem(key, serializedValue);
+                            this.showStatus('تم حفظ البيانات مؤقتًا (ستفقد عند إغلاق المتصفح)', 'warning');
+                            return true;
+                        }
+                        
+                        // إذا لم تنجح أي طريقة
+                        this.showStatus('لا يمكن حفظ البيانات - يرجى تمكين التخزين المحلي', 'error');
+                        return false;
+                    } catch (e) {
+                        console.error('خطأ في حفظ البيانات:', e);
+                        this.showStatus('حدث خطأ أثناء حفظ البيانات', 'error');
+                        return false;
+                    }
+                },
+                
+                // استرجاع البيانات من أفضل مصدر متاح
+                load: function(key, defaultValue = null) {
+                    try {
+                        let data = null;
+                        
+                        // محاولة استرجاع البيانات من localStorage
+                        if (this.isLocalStorageAvailable()) {
+                            data = localStorage.getItem(key);
+                        }
+                        
+                        // إذا لم تنجح، حاول من sessionStorage
+                        if (data === null && this.isSessionStorageAvailable()) {
+                            data = sessionStorage.getItem(key);
+                        }
+                        
+                        // إذا وجدت البيانات، قم بتحويلها من سلسلة نصية
+                        if (data !== null) {
+                            return JSON.parse(data);
+                        }
+                        
+                        // إذا لم تجد أي بيانات، أرجع القيمة الافتراضية
+                        return defaultValue;
+                    } catch (e) {
+                        console.error('خطأ في استرجاع البيانات:', e);
+                        return defaultValue;
+                    }
+                },
+                
+                // حذف البيانات من جميع وسائط التخزين
+                remove: function(key) {
+                    try {
+                        if (this.isLocalStorageAvailable()) {
+                            localStorage.removeItem(key);
+                        }
+                        if (this.isSessionStorageAvailable()) {
+                            sessionStorage.removeItem(key);
+                        }
+                    } catch (e) {
+                        console.error('خطأ في حذف البيانات:', e);
+                    }
+                },
+                
+                // عرض حالة التخزين للمستخدم
+                showStatus: function(message, type = 'info') {
+                    const statusElement = document.getElementById('storageStatus');
+                    if (!statusElement) return;
+                    
+                    // تعيين اللون حسب نوع الرسالة
+                    statusElement.className = 'fixed bottom-4 right-4 px-4 py-2 rounded shadow-lg';
+                    
+                    switch(type) {
+                        case 'success':
+                            statusElement.classList.add('bg-green-500', 'text-white');
+                            break;
+                        case 'warning':
+                            statusElement.classList.add('bg-yellow-500', 'text-white');
+                            break;
+                        case 'error':
+                            statusElement.classList.add('bg-red-500', 'text-white');
+                            break;
+                        default:
+                            statusElement.classList.add('bg-blue-500', 'text-white');
+                    }
+                    
+                    statusElement.textContent = message;
+                    statusElement.classList.remove('hidden');
+                    
+                    // إخفاء الرسالة بعد 3 ثوانٍ
+                    setTimeout(() => {
+                        statusElement.classList.add('hidden');
+                    }, 3000);
+                }
+            };
+
+            // استرجاع الأحداث من التخزين أو استخدام الأحداث الافتراضية
+            let events = loadEvents();
+            
+            // متغيرات عالمية
+            let currentDate = new Date(2025, 8, 1); // سبتمبر 1، 2025
+            let currentView = 'month';
+            let filteredGrades = ['all', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            let filteredCategories = ['exam', 'school', 'trip'];
+            let selectedMonth = 'all';
+            let selectedCategory = 'all';
+            let selectedGrade = 'all';
+            let nextEventId = getNextEventId();
+            let currentEventId = null;
+            let printSettings = {
+                view: 'current',
+                header: true,
+                eventDetails: true,
+                fontSize: 'medium',
+                paperSize: 'a4',
+                orientation: 'portrait'
+            };
+            
+            // تهيئة التقويم
+            updateCalendarHeader();
+            renderCalendar();
+            updateEventCount();
+            
+            // أزرار التنقل
+            document.getElementById('prevBtn').addEventListener('click', function() {
+                if (currentView === 'month') {
+                    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+                } else if (currentView === 'week') {
+                    currentDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+                } else if (currentView === 'year') {
+                    currentDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1);
+                }
+                updateCalendarHeader();
+                renderCalendar();
+            });
+            
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                if (currentView === 'month') {
+                    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                } else if (currentView === 'week') {
+                    currentDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+                } else if (currentView === 'year') {
+                    currentDate = new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), 1);
+                }
+                updateCalendarHeader();
+                renderCalendar();
+            });
+            
+            document.getElementById('todayBtn').addEventListener('click', function() {
+                currentDate = new Date(2025, 8, 1); // سبتمبر 1، 2025 (بداية العام الدراسي)
+                updateCalendarHeader();
+                renderCalendar();
+            });
+            
+            // أزرار تغيير العرض
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white'));
+                    this.classList.add('active', 'bg-blue-600', 'text-white');
+                    
+                    const viewId = this.id;
+                    if (viewId === 'monthViewBtn') currentView = 'month';
+                    else if (viewId === 'weekViewBtn') currentView = 'week';
+                    else if (viewId === 'yearViewBtn') currentView = 'year';
+                    else if (viewId === 'listViewBtn') currentView = 'list';
+                    
+                    document.querySelectorAll('.view-container').forEach(container => {
+                        container.classList.add('hidden');
+                    });
+                    
+                    document.getElementById(currentView + 'View').classList.remove('hidden');
+                    updateCalendarHeader();
+                    renderCalendar();
+                });
+            });
+            
+            // فلاتر الصفوف
+            document.querySelectorAll('.grade-filter').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.value === 'all' && this.checked) {
+                        document.querySelectorAll('.grade-filter').forEach(cb => {
+                            if (cb.value !== 'all') cb.checked = true;
+                        });
+                    } else if (this.value === 'all' && !this.checked) {
+                        document.querySelectorAll('.grade-filter').forEach(cb => {
+                            if (cb.value !== 'all') cb.checked = false;
+                        });
+                    }
+                    
+                    filteredGrades = Array.from(document.querySelectorAll('.grade-filter:checked')).map(cb => cb.value);
+                    
+                    // تحديث حالة "الكل" بناءً على الفلاتر الأخرى
+                    const allGradeCheckbox = document.querySelector('.grade-filter[value="all"]');
+                    const otherGradeCheckboxes = document.querySelectorAll('.grade-filter:not([value="all"])');
+                    const allOtherChecked = Array.from(otherGradeCheckboxes).every(cb => cb.checked);
+                    const noneOtherChecked = Array.from(otherGradeCheckboxes).every(cb => !cb.checked);
+                    
+                    if (allOtherChecked && !allGradeCheckbox.checked) {
+                        allGradeCheckbox.checked = true;
+                        if (!filteredGrades.includes('all')) filteredGrades.push('all');
+                    } else if (noneOtherChecked && allGradeCheckbox.checked) {
+                        allGradeCheckbox.checked = false;
+                        filteredGrades = filteredGrades.filter(g => g !== 'all');
+                    }
+                    
+                    // تحديث القائمة المنسدلة للصف
+                    if (filteredGrades.length === 10) { // جميع الصفوف محددة
+                        document.getElementById('gradeFilter').value = 'all';
+                        selectedGrade = 'all';
+                    } else if (filteredGrades.length === 2 && filteredGrades.includes('all')) {
+                        // صف واحد محدد بالإضافة إلى "الكل"
+                        const specificGrade = filteredGrades.find(g => g !== 'all');
+                        document.getElementById('gradeFilter').value = specificGrade;
+                        selectedGrade = specificGrade;
+                    }
+                    
+                    renderCalendar();
+                    updateEventCount();
+                });
+            });
+            
+            // فلاتر الأحداث
+            document.querySelectorAll('.event-filter').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    filteredCategories = Array.from(document.querySelectorAll('.event-filter:checked')).map(cb => cb.value);
+                    renderCalendar();
+                    updateEventCount();
+                });
+            });
+            
+            // فلاتر متقدمة
+            document.getElementById('monthFilter').addEventListener('change', function() {
+                selectedMonth = this.value;
+                renderCalendar();
+                updateEventCount();
+            });
+            
+            document.getElementById('categoryFilter').addEventListener('change', function() {
+                selectedCategory = this.value;
+                
+                // تحديث فلاتر الأحداث بناءً على الاختيار
+                if (selectedCategory === 'all') {
+                    document.querySelectorAll('.event-filter').forEach(cb => cb.checked = true);
+                    filteredCategories = ['exam', 'school', 'trip'];
+                } else {
+                    document.querySelectorAll('.event-filter').forEach(cb => {
+                        cb.checked = cb.value === selectedCategory;
+                    });
+                    filteredCategories = [selectedCategory];
+                }
+                
+                renderCalendar();
+                updateEventCount();
+            });
+            
+            document.getElementById('gradeFilter').addEventListener('change', function() {
+                selectedGrade = this.value;
+                
+                // تحديث فلاتر الصفوف بناءً على الاختيار
+                if (selectedGrade === 'all') {
+                    document.querySelectorAll('.grade-filter').forEach(cb => cb.checked = true);
+                    filteredGrades = ['all', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                } else {
+                    document.querySelectorAll('.grade-filter').forEach(cb => {
+                        cb.checked = cb.value === selectedGrade || cb.value === 'all';
+                    });
+                    filteredGrades = ['all', selectedGrade];
+                }
+                
+                renderCalendar();
+                updateEventCount();
+            });
+            
+            // زر إعادة تعيين الفلاتر
+            document.getElementById('resetFiltersBtn').addEventListener('click', function() {
+                // إعادة تعيين القوائم المنسدلة
+                document.getElementById('monthFilter').value = 'all';
+                document.getElementById('categoryFilter').value = 'all';
+                document.getElementById('gradeFilter').value = 'all';
+                
+                // إعادة تعيين المتغيرات
+                selectedMonth = 'all';
+                selectedCategory = 'all';
+                selectedGrade = 'all';
+                
+                // إعادة تعيين فلاتر الصفوف
+                document.querySelectorAll('.grade-filter').forEach(cb => cb.checked = true);
+                filteredGrades = ['all', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                
+                // إعادة تعيين فلاتر الأحداث
+                document.querySelectorAll('.event-filter').forEach(cb => cb.checked = true);
+                filteredCategories = ['exam', 'school', 'trip'];
+                
+                renderCalendar();
+                updateEventCount();
+                
+                showNotification('تم إعادة تعيين جميع الفلاتر');
+            });
+            
+            // إغلاق النافذة المنبثقة
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+            document.getElementById('eventModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+            
+            // حذف الحدث
+            document.getElementById('deleteEventBtn').addEventListener('click', function() {
+                if (currentEventId !== null) {
+                    deleteEvent(currentEventId);
+                    closeModal();
+                    renderCalendar();
+                    showNotification('تم حذف الحدث بنجاح');
+                }
+            });
+            
+            // زر إضافة حدث
+            document.getElementById('addEventBtn').addEventListener('click', function() {
+                openAddEventModal();
+            });
+            
+            document.getElementById('closeAddEventModal').addEventListener('click', closeAddEventModal);
+            document.getElementById('cancelAddEvent').addEventListener('click', closeAddEventModal);
+            document.getElementById('addEventModal').addEventListener('click', function(e) {
+                if (e.target === this) closeAddEventModal();
+            });
+            
+            // معالجة إضافة حدث جديد
+            document.getElementById('addEventForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('eventTitle').value;
+                const dateStr = document.getElementById('eventDate').value;
+                const category = document.getElementById('eventCategory').value;
+                const description = document.getElementById('eventDescription').value;
+                
+                // التحقق من اختيار صف واحد على الأقل
+                const selectedGrades = Array.from(document.querySelectorAll('input[name="eventGrade"]:checked')).map(cb => cb.value);
+                if (selectedGrades.length === 0) {
+                    alert('يرجى اختيار صف واحد على الأقل');
+                    return;
+                }
+                
+                // تحويل التاريخ إلى كائن Date
+                const dateParts = dateStr.split('-');
+                const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+                
+                // إنشاء حدث جديد
+                const newEvent = {
+                    id: nextEventId++,
+                    title: title,
+                    date: date,
+                    category: category,
+                    grade: selectedGrades,
+                    description: description
+                };
+                
+                // إضافة الحدث إلى المصفوفة
+                events.push(newEvent);
+                
+                // حفظ الأحداث في التخزين
+                saveEvents();
+                
+                // إعادة عرض التقويم
+                renderCalendar();
+                
+                // إغلاق النافذة المنبثقة
+                closeAddEventModal();
+                
+                // عرض رسالة تأكيد
+                showNotification('تمت إضافة الحدث بنجاح');
+            });
+            
+            // معالجة اختيار "الكل" في نموذج إضافة الحدث
+            document.querySelectorAll('.event-grade-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.value === 'all' && this.checked) {
+                        document.querySelectorAll('.event-grade-checkbox').forEach(cb => {
+                            if (cb.value !== 'all') cb.checked = true;
+                        });
+                    } else if (this.value === 'all' && !this.checked) {
+                        document.querySelectorAll('.event-grade-checkbox').forEach(cb => {
+                            if (cb.value !== 'all') cb.checked = false;
+                        });
+                    }
+                    
+                    // تحديث حالة "الكل" بناءً على الاختيارات الأخرى
+                    const allGradeCheckbox = document.querySelector('.event-grade-checkbox[value="all"]');
+                    const otherGradeCheckboxes = document.querySelectorAll('.event-grade-checkbox:not([value="all"])');
+                    const allOtherChecked = Array.from(otherGradeCheckboxes).every(cb => cb.checked);
+                    const noneOtherChecked = Array.from(otherGradeCheckboxes).every(cb => !cb.checked);
+                    
+                    if (allOtherChecked && !allGradeCheckbox.checked) {
+                        allGradeCheckbox.checked = true;
+                    } else if (noneOtherChecked && allGradeCheckbox.checked) {
+                        allGradeCheckbox.checked = false;
+                    }
+                });
+            });
+            
+            // زر الطباعة
+            document.getElementById('printBtn').addEventListener('click', function() {
+                openPrintModal();
+            });
+            
+            document.getElementById('closePrintModal').addEventListener('click', closePrintModal);
+            document.getElementById('cancelPrint').addEventListener('click', closePrintModal);
+            document.getElementById('printModal').addEventListener('click', function(e) {
+                if (e.target === this) closePrintModal();
+            });
+            
+            // معالجة نموذج الطباعة
+            document.getElementById('printForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // الحصول على إعدادات الطباعة
+                printSettings.view = document.querySelector('input[name="printView"]:checked').value;
+                printSettings.header = document.querySelector('input[name="printHeader"]').checked;
+                printSettings.eventDetails = document.querySelector('input[name="printEventDetails"]').checked;
+                printSettings.fontSize = document.getElementById('printFontSize').value;
+                printSettings.paperSize = document.getElementById('printPaperSize').value;
+                printSettings.orientation = document.querySelector('input[name="printOrientation"]:checked').value;
+                
+                // تطبيق إعدادات الطباعة
+                applyPrintSettings();
+                
+                // إغلاق النافذة المنبثقة
+                closePrintModal();
+                
+                // تنفيذ الطباعة
+                setTimeout(() => {
+                    window.print();
+                    
+                    // إعادة تعيين الأنماط بعد الطباعة
+                    resetPrintSettings();
+                }, 300);
+            });
+            
+            // وظائف التقويم
+            function updateCalendarHeader() {
+                const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                
+                if (currentView === 'month') {
+                    document.getElementById('currentMonthYear').textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                    document.getElementById('printMonthYear').textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                } else if (currentView === 'week') {
+                    const weekStart = getStartOfWeek(currentDate);
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    
+                    let headerText;
+                    if (weekStart.getMonth() === weekEnd.getMonth()) {
+                        headerText = `${weekStart.getDate()} - ${weekEnd.getDate()} ${months[weekStart.getMonth()]} ${weekStart.getFullYear()}`;
+                    } else {
+                        headerText = `${weekStart.getDate()} ${months[weekStart.getMonth()]} - ${weekEnd.getDate()} ${months[weekEnd.getMonth()]} ${weekStart.getFullYear()}`;
+                    }
+                    
+                    document.getElementById('currentMonthYear').textContent = headerText;
+                    document.getElementById('printMonthYear').textContent = headerText;
+                } else if (currentView === 'year') {
+                    document.getElementById('currentMonthYear').textContent = `العام الدراسي ${currentDate.getFullYear()}-${currentDate.getFullYear() + 1}`;
+                    document.getElementById('printMonthYear').textContent = `العام الدراسي ${currentDate.getFullYear()}-${currentDate.getFullYear() + 1}`;
+                } else if (currentView === 'list') {
+                    document.getElementById('currentMonthYear').textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                    document.getElementById('printMonthYear').textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                }
+            }
+            
+            function renderCalendar() {
+                if (currentView === 'month') {
+                    renderMonthView();
+                } else if (currentView === 'week') {
+                    renderWeekView();
+                } else if (currentView === 'year') {
+                    renderYearView();
+                } else if (currentView === 'list') {
+                    renderListView();
+                }
+                
+                // تحديث معلومات الطباعة
+                updatePrintInfo();
+            }
+            
+            function renderMonthView() {
+                const monthGrid = document.getElementById('monthGrid');
+                monthGrid.innerHTML = '';
+                
+                const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+                
+                // الحصول على يوم بداية الشهر (0 = الأحد، 6 = السبت)
+                let startDay = firstDay.getDay();
+                
+                // إنشاء الأيام السابقة من الشهر السابق
+                const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+                for (let i = startDay - 1; i >= 0; i--) {
+                    const dayElement = createDayElement(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, prevMonthLastDay - i), true);
+                    monthGrid.appendChild(dayElement);
+                }
+                
+                // إنشاء أيام الشهر الحالي
+                for (let day = 1; day <= lastDay.getDate(); day++) {
+                    const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                    const dayElement = createDayElement(dayDate, false);
+                    monthGrid.appendChild(dayElement);
+                }
+                
+                // إضافة أيام من الشهر التالي لإكمال الشبكة
+                const daysAdded = startDay + lastDay.getDate();
+                const remainingDays = 42 - daysAdded; // 6 صفوف × 7 أيام = 42
+                
+                for (let day = 1; day <= remainingDays; day++) {
+                    const dayElement = createDayElement(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, day), true);
+                    monthGrid.appendChild(dayElement);
+                }
+            }
+            
+            function renderWeekView() {
+                const weekGrid = document.getElementById('weekGrid');
+                weekGrid.innerHTML = '';
+                
+                const weekStart = getStartOfWeek(currentDate);
+                
+                for (let i = 0; i < 7; i++) {
+                    const dayDate = new Date(weekStart);
+                    dayDate.setDate(dayDate.getDate() + i);
+                    
+                    const dayElement = createDayElement(dayDate, false, true);
+                    weekGrid.appendChild(dayElement);
+                }
+            }
+            
+            function renderYearView() {
+                const yearGrid = document.getElementById('yearGrid');
+                yearGrid.innerHTML = '';
+                
+                const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                const dayHeaders = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
+                
+                // الأشهر التعليمية (سبتمبر إلى يونيو)
+                const schoolMonths = [8, 9, 10, 11, 0, 1, 2, 3, 4, 5]; // سبتمبر 2025 إلى يونيو 2026
+                
+                // إنشاء حاوي للأشهر مع تخطيط أفقي مناسب لـ A3
+                const monthsContainer = document.createElement('div');
+                monthsContainer.className = 'year-view-container grid grid-cols-2 lg:grid-cols-5 gap-2';
+                
+                // إنشاء الأشهر التعليمية
+                schoolMonths.forEach(monthIndex => {
+                    // تحديد السنة الصحيحة (2025 لسبتمبر-ديسمبر، 2026 ليناير-يونيو)
+                    const year = monthIndex >= 8 ? currentDate.getFullYear() : currentDate.getFullYear() + 1;
+                    
+                    const monthContainer = document.createElement('div');
+                    monthContainer.className = 'year-month compact-month';
+                    
+                    // عنوان الشهر
+                    const monthHeader = document.createElement('div');
+                    monthHeader.className = 'year-month-header compact-header';
+                    monthHeader.textContent = `${months[monthIndex]} ${year}`;
+                    monthContainer.appendChild(monthHeader);
+                    
+                    // شبكة الشهر
+                    const monthGrid = document.createElement('div');
+                    monthGrid.className = 'year-month-grid compact-grid';
+                    
+                    // إضافة عناوين الأيام
+                    dayHeaders.forEach(day => {
+                        const dayHeader = document.createElement('div');
+                        dayHeader.className = 'year-day-header compact-day-header';
+                        dayHeader.textContent = day;
+                        monthGrid.appendChild(dayHeader);
+                    });
+                    
+                    // حساب أيام الشهر
+                    const firstDay = new Date(year, monthIndex, 1);
+                    const lastDay = new Date(year, monthIndex + 1, 0);
+                    const startDay = firstDay.getDay();
+                    
+                    // إضافة أيام من الشهر السابق
+                    const prevMonthLastDay = new Date(year, monthIndex, 0).getDate();
+                    for (let i = startDay - 1; i >= 0; i--) {
+                        const dayElement = createYearDayElement(
+                            new Date(year, monthIndex - 1, prevMonthLastDay - i), 
+                            true
+                        );
+                        monthGrid.appendChild(dayElement);
+                    }
+                    
+                    // إضافة أيام الشهر الحالي
+                    for (let day = 1; day <= lastDay.getDate(); day++) {
+                        const dayDate = new Date(year, monthIndex, day);
+                        const dayElement = createYearDayElement(dayDate, false);
+                        monthGrid.appendChild(dayElement);
+                    }
+                    
+                    // إضافة أيام من الشهر التالي لإكمال الشبكة
+                    const daysAdded = startDay + lastDay.getDate();
+                    const remainingDays = 42 - daysAdded;
+                    
+                    for (let day = 1; day <= remainingDays; day++) {
+                        const dayElement = createYearDayElement(
+                            new Date(year, monthIndex + 1, day), 
+                            true
+                        );
+                        monthGrid.appendChild(dayElement);
+                    }
+                    
+                    monthContainer.appendChild(monthGrid);
+                    monthsContainer.appendChild(monthContainer);
+                });
+                
+                yearGrid.appendChild(monthsContainer);
+            }
+            
+            function createYearDayElement(date, isOtherMonth) {
+                const dayElement = document.createElement('div');
+                dayElement.className = `year-day ${isOtherMonth ? 'other-month' : ''}`;
+                dayElement.textContent = date.getDate();
+                
+                // البحث عن الأحداث في هذا اليوم
+                const dayEvents = getFilteredEvents().filter(event => 
+                    event.date.getDate() === date.getDate() && 
+                    event.date.getMonth() === date.getMonth() && 
+                    event.date.getFullYear() === date.getFullYear()
+                );
+                
+                if (dayEvents.length > 0) {
+                    dayElement.classList.add('has-events');
+                    
+                    // إضافة عداد الأحداث إذا كان هناك أكثر من حدث واحد
+                    if (dayEvents.length > 1) {
+                        const eventCount = document.createElement('div');
+                        eventCount.className = 'year-event-count';
+                        eventCount.textContent = dayEvents.length;
+                        dayElement.appendChild(eventCount);
+                    }
+                    
+                    // إضافة حدث النقر لعرض تفاصيل الأحداث
+                    dayElement.addEventListener('click', () => {
+                        if (dayEvents.length === 1) {
+                            showEventDetails(dayEvents[0]);
+                        } else {
+                            showDayEventsModal(date, dayEvents);
+                        }
+                    });
+                    
+                    dayElement.style.cursor = 'pointer';
+                }
+                
+                return dayElement;
+            }
+            
+            function showDayEventsModal(date, events) {
+                // إنشاء نافذة منبثقة لعرض أحداث اليوم
+                const modal = document.createElement('div');
+                modal.className = 'modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                
+                const modalContent = document.createElement('div');
+                modalContent.className = 'bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 max-h-96 overflow-y-auto';
+                
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center mb-4';
+                header.innerHTML = `
+                    <h3 class="text-xl font-bold">أحداث يوم ${formatDate(date)}</h3>
+                    <button class="text-gray-500 hover:text-gray-700 close-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                const eventsList = document.createElement('div');
+                eventsList.className = 'space-y-3';
+                
+                events.forEach(event => {
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'p-3 border rounded-lg hover:bg-gray-50 cursor-pointer';
+                    eventItem.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full mr-2 ${getCategoryColorClass(event.category)}"></div>
+                            <div class="flex-grow">
+                                <div class="font-medium">${event.title}</div>
+                                <div class="text-sm text-gray-600">${getCategoryName(event.category)} • ${getGradeLabel(event.grade)}</div>
+                            </div>
+                        </div>
+                    `;
+                    eventItem.addEventListener('click', () => {
+                        document.body.removeChild(modal);
+                        showEventDetails(event);
+                    });
+                    eventsList.appendChild(eventItem);
+                });
+                
+                modalContent.appendChild(header);
+                modalContent.appendChild(eventsList);
+                modal.appendChild(modalContent);
+                
+                // إضافة أحداث الإغلاق
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal || e.target.classList.contains('close-modal')) {
+                        document.body.removeChild(modal);
+                    }
+                });
+                
+                document.body.appendChild(modal);
+            }
+            
+            function renderListView() {
+                const eventsList = document.getElementById('eventsList');
+                eventsList.innerHTML = '';
+                
+                // الحصول على الأحداث المفلترة للشهر الحالي
+                const monthEvents = getFilteredEvents().filter(event => {
+                    return event.date.getMonth() === currentDate.getMonth() && 
+                           event.date.getFullYear() === currentDate.getFullYear();
+                });
+                
+                // ترتيب الأحداث حسب التاريخ
+                monthEvents.sort((a, b) => a.date - b.date);
+                
+                if (monthEvents.length === 0) {
+                    eventsList.innerHTML = '<div class="py-4 text-center text-gray-500">لا توجد أحداث في هذا الشهر</div>';
+                    return;
+                }
+                
+                // تجميع الأحداث حسب التاريخ
+                const eventsByDate = {};
+                monthEvents.forEach(event => {
+                    const dateStr = event.date.toDateString();
+                    if (!eventsByDate[dateStr]) {
+                        eventsByDate[dateStr] = [];
+                    }
+                    eventsByDate[dateStr].push(event);
+                });
+                
+                // إنشاء قائمة الأحداث
+                for (const dateStr in eventsByDate) {
+                    const date = new Date(dateStr);
+                    const dateHeader = document.createElement('div');
+                    dateHeader.className = 'py-2 px-4 bg-gray-100 font-bold';
+                    dateHeader.textContent = formatDate(date);
+                    eventsList.appendChild(dateHeader);
+                    
+                    eventsByDate[dateStr].forEach(event => {
+                        const eventItem = document.createElement('div');
+                        eventItem.className = 'py-3 px-4 hover:bg-gray-50 cursor-pointer';
+                        eventItem.innerHTML = `
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full mr-2 ${getCategoryColorClass(event.category)}"></div>
+                                <div class="flex-grow">
+                                    <div class="font-medium">${event.title}</div>
+                                    <div class="text-sm text-gray-600">${getCategoryName(event.category)} • ${getGradeLabel(event.grade)}</div>
+                                </div>
+                            </div>
+                        `;
+                        eventItem.addEventListener('click', () => showEventDetails(event));
+                        eventsList.appendChild(eventItem);
+                    });
+                }
+            }
+            
+            function createDayElement(date, isOtherMonth, isWeekView = false) {
+                const dayElement = document.createElement('div');
+                dayElement.className = `calendar-day border p-1 ${isOtherMonth ? 'bg-gray-100 text-gray-400' : 'bg-white'}`;
+                
+                if (isWeekView) {
+                    dayElement.classList.add('min-h-[200px]');
+                }
+                
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'flex justify-between items-center mb-1';
+                
+                const dayNumber = document.createElement('span');
+                dayNumber.className = 'day-number font-bold';
+                dayNumber.textContent = date.getDate();
+                
+                // إضافة زر إضافة حدث صغير لكل يوم
+                const addBtn = document.createElement('button');
+                addBtn.className = 'text-gray-400 hover:text-green-600 text-xs no-print';
+                addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                addBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openAddEventModal(date);
+                });
+                
+                dayHeader.appendChild(dayNumber);
+                dayHeader.appendChild(addBtn);
+                dayElement.appendChild(dayHeader);
+                
+                // إضافة الأحداث لهذا اليوم
+                const dayEvents = getFilteredEvents().filter(event => 
+                    event.date.getDate() === date.getDate() && 
+                    event.date.getMonth() === date.getMonth() && 
+                    event.date.getFullYear() === date.getFullYear()
+                );
+                
+                const eventsContainer = document.createElement('div');
+                eventsContainer.className = 'events-container';
+                
+                dayEvents.forEach(event => {
+                    const eventElement = document.createElement('div');
+                    eventElement.className = `event event-${event.category}`;
+                    eventElement.textContent = event.title;
+                    eventElement.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showEventDetails(event);
+                    });
+                    eventsContainer.appendChild(eventElement);
+                });
+                
+                dayElement.appendChild(eventsContainer);
+                
+                // إضافة حدث النقر على اليوم لإضافة حدث جديد
+                dayElement.addEventListener('click', () => {
+                    openAddEventModal(date);
+                });
+                
+                return dayElement;
+            }
+            
+            function getFilteredEvents() {
+                return events.filter(event => {
+                    // فلترة حسب الفئة العمرية
+                    const gradeMatch = event.grade.some(grade => filteredGrades.includes(grade)) || 
+                                      (filteredGrades.includes('all') && event.grade.includes('all'));
+                    
+                    // فلترة حسب نوع الحدث
+                    const categoryMatch = filteredCategories.includes(event.category);
+                    
+                    // فلترة حسب الشهر المحدد
+                    let monthMatch = true;
+                    if (selectedMonth !== 'all') {
+                        const eventMonth = event.date.getMonth();
+                        const eventYear = event.date.getFullYear();
+                        const filterMonth = parseInt(selectedMonth);
+                        
+                        // تحديد السنة المتوقعة للشهر
+                        let expectedYear;
+                        if (filterMonth >= 8) { // سبتمبر - ديسمبر 2025
+                            expectedYear = 2025;
+                        } else { // يناير - يونيو 2026
+                            expectedYear = 2026;
+                        }
+                        
+                        monthMatch = (eventMonth === filterMonth && eventYear === expectedYear);
+                    }
+                    
+                    return gradeMatch && categoryMatch && monthMatch;
+                });
+            }
+            
+            function showEventDetails(event) {
+                const modal = document.getElementById('eventModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalContent = document.getElementById('modalContent');
+                const modalDate = document.getElementById('modalDate');
+                const modalCategory = document.getElementById('modalCategory');
+                const modalGrade = document.getElementById('modalGrade');
+                
+                currentEventId = event.id;
+                
+                modalTitle.textContent = event.title;
+                modalContent.textContent = event.description;
+                modalDate.innerHTML = `<i class="far fa-calendar-alt mr-2"></i> ${formatDate(event.date)}`;
+                
+                modalCategory.innerHTML = `<div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full mr-2 ${getCategoryColorClass(event.category)}"></div>
+                    <span>${getCategoryName(event.category)}</span>
+                </div>`;
+                
+                modalGrade.innerHTML = `<i class="fas fa-users mr-2"></i> ${getGradeLabel(event.grade)}`;
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            
+            function closeModal() {
+                const modal = document.getElementById('eventModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                currentEventId = null;
+            }
+            
+            function openAddEventModal(date = null) {
+                const modal = document.getElementById('addEventModal');
+                
+                // إذا تم تمرير تاريخ، قم بتعيينه في النموذج
+                if (date) {
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    document.getElementById('eventDate').value = `${year}-${month}-${day}`;
+                } else {
+                    // تعيين التاريخ الحالي كقيمة افتراضية
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+                    const day = today.getDate().toString().padStart(2, '0');
+                    document.getElementById('eventDate').value = `${year}-${month}-${day}`;
+                }
+                
+                // إعادة تعيين النموذج
+                document.getElementById('eventTitle').value = '';
+                document.getElementById('eventDescription').value = '';
+                document.getElementById('eventCategory').value = 'school';
+                document.querySelectorAll('.event-grade-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            
+            function closeAddEventModal() {
+                const modal = document.getElementById('addEventModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            
+            function openPrintModal() {
+                const modal = document.getElementById('printModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            
+            function closePrintModal() {
+                const modal = document.getElementById('printModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            
+            function applyPrintSettings() {
+                // إزالة أي أنماط طباعة سابقة
+                const existingStyle = document.getElementById('printStyle');
+                if (existingStyle) {
+                    existingStyle.remove();
+                }
+                
+                // إنشاء أنماط الطباعة الجديدة
+                const printStyle = document.createElement('style');
+                printStyle.id = 'printStyle';
+                
+                // تعيين حجم الخط الأساسي
+                let baseFontSize = '12pt';
+                if (printSettings.fontSize === 'small') baseFontSize = '10pt';
+                else if (printSettings.fontSize === 'large') baseFontSize = '14pt';
+                
+                // تعيين اتجاه الصفحة
+                const orientation = printSettings.orientation === 'landscape' ? 'landscape' : 'portrait';
+                
+                // إعداد أنماط الطباعة حسب حجم الورق
+                let printCSS = '';
+                
+                if (printSettings.paperSize === 'a3-full') {
+                    // A3 استغلال كامل - خط كبير وواضح
+                    printCSS = `
+                        @media print {
+                            @page {
+                                size: A3 ${orientation};
+                                margin: 0.3cm !important;
+                            }
+                            
+                            * {
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                            
+                            body {
+                                margin: 0 !important;
+                                padding: 0 !important;
+                                font-family: 'Tajawal', sans-serif !important;
+                                background: white !important;
+                                font-size: ${baseFontSize === '10pt' ? '16pt' : (baseFontSize === '14pt' ? '20pt' : '18pt')} !important;
+                                line-height: 1.4 !important;
+                            }
+                            
+                            .container {
+                                max-width: none !important;
+                                width: 100% !important;
+                                padding: 0.5cm !important;
+                                margin: 0 !important;
+                            }
+                            
+                            .print-only {
+                                display: ${printSettings.header ? 'block' : 'none'} !important;
+                            }
+                            
+                            .print-header h1 {
+                                font-size: 3.5em !important;
+                                font-weight: 800 !important;
+                                margin-bottom: 0.4rem !important;
+                                text-align: center !important;
+                                color: #000 !important;
+                            }
+                            
+                            .print-header div {
+                                font-size: 2.5em !important;
+                                font-weight: 700 !important;
+                                margin-bottom: 0.4rem !important;
+                                text-align: center !important;
+                                color: #333 !important;
+                            }
+                            
+                            .print-info {
+                                font-size: 1.6em !important;
+                                margin-bottom: 1.2rem !important;
+                                font-weight: 600 !important;
+                            }
+                            
+                            .print-info div {
+                                margin-bottom: 0.4rem !important;
+                                color: #555 !important;
+                            }
+                            
+                            /* تحسين التقويم الشهري */
+                            .calendar-grid {
+                                gap: 4px !important;
+                                margin-bottom: 0 !important;
+                            }
+                            
+                            .day-name {
+                                font-size: 2.2em !important;
+                                font-weight: 700 !important;
+                                padding: 12px !important;
+                                text-align: center !important;
+                                background: #f0f0f0 !important;
+                                border: 2px solid #333 !important;
+                                color: #000 !important;
+                            }
+                            
+                            .calendar-day {
+                                min-height: 220px !important;
+                                padding: 10px !important;
+                                border: 2px solid #333 !important;
+                                background: white !important;
+                                page-break-inside: avoid !important;
+                            }
+                            
+                            .day-number {
+                                font-size: 2.4em !important;
+                                font-weight: 800 !important;
+                                color: #000 !important;
+                                margin-bottom: 8px !important;
+                            }
+                            
+                            .event {
+                                font-size: ${baseFontSize === '10pt' ? '14pt' : (baseFontSize === '14pt' ? '18pt' : '16pt')} !important;
+                                padding: 6px 8px !important;
+                                margin-bottom: 6px !important;
+                                border-radius: 6px !important;
+                                font-weight: 700 !important;
+                                line-height: 1.3 !important;
+                                border: 2px solid #333 !important;
+                                color: #000 !important;
+                                background: #f9f9f9 !important;
+                                display: block !important;
+                                word-wrap: break-word !important;
+                                overflow: visible !important;
+                                white-space: normal !important;
+                            }
+                            
+                            .event-exam {
+                                background: #ffebee !important;
+                                border-color: #d32f2f !important;
+                                color: #000 !important;
+                            }
+                            
+                            .event-school {
+                                background: #e8f5e8 !important;
+                                border-color: #2e7d32 !important;
+                                color: #000 !important;
+                            }
+                            
+                            .event-trip {
+                                background: #fff8e1 !important;
+                                border-color: #f57c00 !important;
+                                color: #000 !important;
+                            }
+                            
+                            /* تحسين العرض السنوي */
+                            #yearView .year-view-container {
+                                grid-template-columns: repeat(5, 1fr) !important;
+                                gap: 12px !important;
+                                width: 100% !important;
+                            }
+                            
+                            #yearView .year-month {
+                                border: 3px solid #000 !important;
+                                padding: 8px !important;
+                                background: white !important;
+                                page-break-inside: avoid !important;
+                            }
+                            
+                            #yearView .year-month-header {
+                                font-size: 1.4rem !important;
+                                padding: 6px !important;
+                                margin-bottom: 6px !important;
+                                font-weight: 800 !important;
+                                background: #f0f0f0 !important;
+                                color: #000 !important;
+                                text-align: center !important;
+                                border-radius: 4px !important;
+                            }
+                            
+                            #yearView .year-month-grid {
+                                gap: 2px !important;
+                                font-size: 1rem !important;
+                            }
+                            
+                            #yearView .year-day-header {
+                                font-size: 0.9rem !important;
+                                min-height: 16px !important;
+                                padding: 4px !important;
+                                font-weight: 700 !important;
+                                background: #f9f9f9 !important;
+                                color: #000 !important;
+                                text-align: center !important;
+                                border: 1px solid #666 !important;
+                            }
+                            
+                            #yearView .year-day {
+                                min-height: 28px !important;
+                                font-size: 1rem !important;
+                                padding: 4px !important;
+                                border: 1.5px solid #333 !important;
+                                font-weight: 700 !important;
+                                color: #000 !important;
+                                background: white !important;
+                                text-align: center !important;
+                                display: flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                            }
+                            
+                            #yearView .year-day.has-events {
+                                background: #e3f2fd !important;
+                                font-weight: 800 !important;
+                                color: #000 !important;
+                            }
+                            
+                            #yearView .year-day.other-month {
+                                color: #999 !important;
+                                background: #f5f5f5 !important;
+                            }
+                            
+                            #yearView .year-event-count {
+                                width: 16px !important;
+                                height: 16px !important;
+                                font-size: 0.8rem !important;
+                                font-weight: 800 !important;
+                                background: #d32f2f !important;
+                                color: white !important;
+                                border-radius: 50% !important;
+                                position: absolute !important;
+                                top: -2px !important;
+                                right: -2px !important;
+                                display: flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                            }
+                            
+                            /* تحسين عرض القائمة */
+                            #listView {
+                                font-size: 1.8em !important;
+                            }
+                            
+                            #listView .py-2 {
+                                padding: 16px 20px !important;
+                                font-size: 1.4em !important;
+                                font-weight: 800 !important;
+                                background: #f0f0f0 !important;
+                                color: #000 !important;
+                                border: 2px solid #333 !important;
+                                margin-bottom: 4px !important;
+                            }
+                            
+                            #listView .py-3 {
+                                padding: 20px !important;
+                                border-bottom: 3px solid #333 !important;
+                                font-size: 1.2em !important;
+                            }
+                            
+                            #listView .font-medium {
+                                font-size: 1.3em !important;
+                                font-weight: 700 !important;
+                                color: #000 !important;
+                            }
+                            
+                            #listView .text-sm {
+                                font-size: 1.1em !important;
+                                font-weight: 600 !important;
+                                color: #333 !important;
+                            }
+                            
+                            #listView .w-3 {
+                                width: 16px !important;
+                                height: 16px !important;
+                            }
+                        }
+                    `;
+                } else if (printSettings.paperSize === 'a3') {
+                    // A3 عادي
+                    printCSS = `
+                        @media print {
+                            @page {
+                                size: A3 ${orientation};
+                                margin: 1cm !important;
+                            }
+                            
+                            body {
+                                font-size: ${baseFontSize === '10pt' ? '14pt' : (baseFontSize === '14pt' ? '18pt' : '16pt')} !important;
+                            }
+                            
+                            .calendar-grid {
+                                font-size: 1.4em !important;
+                            }
+                            
+                            .day-name {
+                                font-size: 1.6em !important;
+                                font-weight: 700 !important;
+                                padding: 10px !important;
+                            }
+                            
+                            .day-number {
+                                font-size: 1.8em !important;
+                                font-weight: 700 !important;
+                            }
+                            
+                            .calendar-day {
+                                min-height: 180px !important;
+                                padding: 8px !important;
+                                border: 2px solid #333 !important;
+                            }
+                            
+                            .event {
+                                font-size: ${baseFontSize === '10pt' ? '12pt' : (baseFontSize === '14pt' ? '16pt' : '14pt')} !important;
+                                font-weight: 600 !important;
+                                padding: 4px 6px !important;
+                                margin-bottom: 4px !important;
+                                border: 1px solid #333 !important;
+                            }
+                            
+                            .print-header h1 {
+                                font-size: 2.8em !important;
+                                font-weight: 700 !important;
+                            }
+                            
+                            .print-header div {
+                                font-size: 2em !important;
+                                font-weight: 600 !important;
+                            }
+                            
+                            .print-info {
+                                font-size: 1.4em !important;
+                                font-weight: 600 !important;
+                            }
+                        }
+                    `;
+                } else {
+                    // A4 عادي
+                    printCSS = `
+                        @media print {
+                            @page {
+                                size: A4 ${orientation};
+                                margin: 1cm !important;
+                            }
+                            
+                            body {
+                                font-size: ${baseFontSize} !important;
+                            }
+                            
+                            .calendar-day {
+                                min-height: 120px !important;
+                                border: 1px solid #333 !important;
+                            }
+                            
+                            .event {
+                                font-size: ${baseFontSize === '10pt' ? '9pt' : (baseFontSize === '14pt' ? '12pt' : '10pt')} !important;
+                                border: 1px solid #666 !important;
+                            }
+                        }
+                    `;
+                }
+                
+                printStyle.textContent = printCSS;
+                document.head.appendChild(printStyle);
+                
+                // إظهار/إخفاء تفاصيل الأحداث
+                if (!printSettings.eventDetails) {
+                    document.querySelectorAll('.event').forEach(event => {
+                        event.style.overflow = 'hidden';
+                        event.style.textOverflow = 'ellipsis';
+                        event.style.whiteSpace = 'nowrap';
+                    });
+                }
+                
+                // تحديث معلومات الطباعة
+                updatePrintInfo();
+                
+                // تعيين تاريخ الطباعة
+                const now = new Date();
+                document.getElementById('printDate').textContent = `تاريخ الطباعة: ${formatDate(now)}`;
+            }
+            
+            function resetPrintSettings() {
+                // إزالة أنماط الطباعة المخصصة
+                const printStyle = document.getElementById('printStyle');
+                if (printStyle) {
+                    printStyle.textContent = '';
+                }
+                
+                // إعادة تعيين أنماط الأحداث
+                document.querySelectorAll('.event').forEach(event => {
+                    event.style.overflow = '';
+                    event.style.textOverflow = '';
+                    event.style.whiteSpace = '';
+                });
+            }
+            
+            function updatePrintInfo() {
+                // تحديث معلومات الصفوف المفلترة
+                const gradeLabels = {
+                    'all': 'جميع الصفوف',
+                    '1': 'الصف الأول',
+                    '2': 'الصف الثاني',
+                    '3': 'الصف الثالث',
+                    '4': 'الصف الرابع',
+                    '5': 'الصف الخامس',
+                    '6': 'الصف السادس',
+                    '7': 'الصف السابع',
+                    '8': 'الصف الثامن',
+                    '9': 'الصف التاسع'
+                };
+                
+                let gradesText = '';
+                if (filteredGrades.includes('all')) {
+                    gradesText = 'الصفوف: جميع الصفوف';
+                } else {
+                    const gradeNames = filteredGrades.map(grade => gradeLabels[grade]);
+                    gradesText = 'الصفوف: ' + gradeNames.join('، ');
+                }
+                document.getElementById('printGrades').textContent = gradesText;
+                
+                // تحديث معلومات الفئات المفلترة
+                const categoryLabels = {
+                    'exam': 'امتحانات',
+                    'school': 'أحداث مدرسية',
+                    'trip': 'رحلات/أنشطة'
+                };
+                
+                const categoryNames = filteredCategories.map(cat => categoryLabels[cat]);
+                const categoriesText = 'الأحداث: ' + categoryNames.join('، ');
+                document.getElementById('printCategories').textContent = categoriesText;
+                
+                // تحديث معلومات حجم الورق
+                let paperSizeLabel = 'A4';
+                if (printSettings.paperSize === 'a3') paperSizeLabel = 'A3 عادي';
+                else if (printSettings.paperSize === 'a3-full') paperSizeLabel = 'A3 استغلال كامل';
+                
+                const paperSizeText = 'حجم الورق: ' + paperSizeLabel + 
+                                     ' - الاتجاه: ' + (printSettings.orientation === 'landscape' ? 'أفقي' : 'عمودي');
+                document.getElementById('printPaperSize').textContent = paperSizeText;
+            }
+            
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.classList.remove('hidden');
+                
+                // عرض الإشعار
+                setTimeout(() => {
+                    notification.classList.remove('opacity-0');
+                }, 10);
+                
+                // إخفاء الإشعار بعد 3 ثوانٍ
+                setTimeout(() => {
+                    notification.classList.add('opacity-0');
+                    setTimeout(() => {
+                        notification.classList.add('hidden');
+                    }, 300);
+                }, 3000);
+            }
+            
+            function getStartOfWeek(date) {
+                const result = new Date(date);
+                const day = result.getDay(); // 0 = الأحد، 6 = السبت
+                result.setDate(result.getDate() - day);
+                return result;
+            }
+            
+            function formatDate(date) {
+                const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                
+                return `${days[date.getDay()]}، ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+            }
+            
+            function getCategoryName(category) {
+                switch(category) {
+                    case 'exam': return 'امتحان';
+                    case 'school': return 'حدث مدرسي';
+                    case 'trip': return 'رحلة/نشاط';
+                    default: return '';
+                }
+            }
+            
+            function getCategoryColorClass(category) {
+                switch(category) {
+                    case 'exam': return 'bg-red-500';
+                    case 'school': return 'bg-green-500';
+                    case 'trip': return 'bg-amber-500';
+                    default: return 'bg-gray-500';
+                }
+            }
+            
+            function getGradeLabel(grades) {
+                if (grades.includes('all')) {
+                    return 'جميع الصفوف';
+                }
+                
+                const gradeLabels = {
+                    '1': 'الصف الأول',
+                    '2': 'الصف الثاني',
+                    '3': 'الصف الثالث',
+                    '4': 'الصف الرابع',
+                    '5': 'الصف الخامس',
+                    '6': 'الصف السادس',
+                    '7': 'الصف السابع',
+                    '8': 'الصف الثامن',
+                    '9': 'الصف التاسع'
+                };
+                
+                return grades.map(grade => gradeLabels[grade]).join('، ');
+            }
+            
+            // وظائف حفظ واسترجاع البيانات
+            function saveEvents() {
+                try {
+                    // تحويل كائنات التاريخ إلى سلاسل نصية
+                    const eventsToSave = events.map(event => {
+                        return {
+                            ...event,
+                            date: event.date.toISOString()
+                        };
+                    });
+                    
+                    // حفظ الأحداث
+                    Storage.save('schoolCalendarEvents', eventsToSave);
+                    
+                    // حفظ معرف الحدث التالي
+                    Storage.save('schoolCalendarNextId', nextEventId);
+                    
+                    return true;
+                } catch (e) {
+                    console.error('خطأ في حفظ الأحداث:', e);
+                    return false;
+                }
+            }
+            
+            function loadEvents() {
+                try {
+                    // استرجاع الأحداث
+                    const savedEvents = Storage.load('schoolCalendarEvents');
+                    
+                    if (savedEvents && Array.isArray(savedEvents) && savedEvents.length > 0) {
+                        // تحويل السلاسل النصية إلى كائنات Date
+                        return savedEvents.map(event => {
+                            return {
+                                ...event,
+                                date: new Date(event.date)
+                            };
+                        });
+                    }
+                    
+                    // استرجاع معرف الحدث التالي
+                    const savedNextId = Storage.load('schoolCalendarNextId');
+                    if (savedNextId) {
+                        nextEventId = savedNextId;
+                    }
+                } catch (e) {
+                    console.error('خطأ في تحميل الأحداث:', e);
+                }
+                
+                return [...defaultEvents];
+            }
+            
+            function getNextEventId() {
+                // البحث عن أعلى معرف في الأحداث الحالية
+                let maxId = 0;
+                events.forEach(event => {
+                    if (event.id > maxId) {
+                        maxId = event.id;
+                    }
+                });
+                
+                return maxId + 1;
+            }
+            
+            function deleteEvent(id) {
+                events = events.filter(event => event.id !== id);
+                saveEvents();
+            }
+            
+            // إضافة مستمع للتخزين عند إغلاق الصفحة
+            window.addEventListener('beforeunload', function() {
+                saveEvents();
+            });
+            
+            // دالة تحديث عداد الأحداث
+            function updateEventCount() {
+                const filteredEvents = getFilteredEvents();
+                const eventCount = document.getElementById('eventCount');
+                eventCount.textContent = filteredEvents.length;
+                
+                // تحديث لون العداد حسب عدد الأحداث
+                const filterStatus = document.getElementById('filterStatus');
+                if (filteredEvents.length === 0) {
+                    filterStatus.className = 'text-sm text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200';
+                } else if (filteredEvents.length < 5) {
+                    filterStatus.className = 'text-sm text-yellow-600 bg-yellow-50 px-2 py-1 rounded border border-yellow-200';
+                } else {
+                    filterStatus.className = 'text-sm text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200';
+                }
+            }
+            
+            // إضافة مستمع للتخزين الدوري كل 30 ثانية
+            setInterval(function() {
+                saveEvents();
+            }, 30000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98d48f23865199dd',t:'MTc2MDI1MDczNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
