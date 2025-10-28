@@ -1,0 +1,47 @@
+/* src/components/Dashboard/WeatherPanel.module.css */
+
+.weatherPanel {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e8e8e8;
+}
+
+.dayColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 5px;
+    border-left: 1px solid #eee; /* خطوط فاصلة بين الأيام */
+}
+
+.dayColumn:last-child {
+    border-left: none;
+}
+
+.dayLabel {
+    font-size: 0.8rem;
+    color: #8c8c8c;
+    margin-bottom: 3px;
+}
+
+.dateLabel {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.weatherIcon {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.tempLabel {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1890ff; /* لون أزرق لدرجة الحرارة */
+}

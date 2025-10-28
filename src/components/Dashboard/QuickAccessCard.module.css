@@ -1,0 +1,55 @@
+/* src/components/Dashboard/QuickAccessCard.module.css */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 5px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100px; /* لتوحيد ارتفاع البطاقات */
+  border-top: 5px solid var(--item-color); /* شريط علوي ملون */
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+}
+
+/* تنسيق خاص لزر الإدارة ليمتد على عرض عمودين */
+.managementCard {
+    grid-column: span 2;
+    background-color: var(--item-color); /* خلفية بلون الأيقونة */
+    color: white;
+    border: none;
+    height: 60px; /* ارتفاع أقل ليكون كشريط */
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.managementCard .icon {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+.managementCard .label {
+    color: white;
+    font-size: 1.1rem;
+}

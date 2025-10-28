@@ -1,0 +1,111 @@
+/* src/components/Dashboard/DashboardPanel.module.css */
+
+.panel {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-top: 4px solid #1890ff; /* شريط علوي أزرق */
+    display: flex;
+    flex-direction: column;
+}
+
+.panelTitle {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1890ff;
+    margin-bottom: 10px;
+    text-align: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* --- تنسيق لوحة الإعلانات --- */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.announcementColumn {
+    padding: 5px 0;
+}
+
+.columnTitle {
+    font-weight: bold;
+    color: #434343;
+    margin-bottom: 5px;
+    border-right: 3px solid #69c0ff;
+    padding-right: 5px;
+}
+
+.announcementText {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: #595959;
+}
+
+.detailsText {
+     font-size: 0.8rem;
+     color: #8c8c8c;
+     margin-bottom: 2px;
+}
+
+.announcementImage {
+    width: 100%;
+    height: 80px;
+    background-color: #eee; /* Placeholder for image */
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+/* --- تنسيق لوحة الفعاليات --- */
+.activityCard {
+    border: 1px solid #d9d9d9;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+.activityDate {
+    display: block;
+    background-color: #1890ff;
+    color: white;
+    padding: 2px 5px;
+    font-size: 0.75rem;
+    width: fit-content;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+
+.activityTitle {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.buttonContainer {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.viewButton {
+    background-color: #52c41a;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.allActivitiesButton button {
+    width: 100%;
+    background-color: #faad14; /* لون برتقالي/ذهبي */
+    color: white;
+    border: none;
+    padding: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+}
