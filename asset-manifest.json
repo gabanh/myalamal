@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/myalamal/static/css/main.23099824.css",
-    "main.js": "/myalamal/static/js/main.b9aa6a31.js",
+    "main.css": "/myalamal/static/css/main.fdffa643.css",
+    "main.js": "/myalamal/static/js/main.d5af43a9.js",
     "index.html": "/myalamal/index.html",
-    "main.23099824.css.map": "/myalamal/static/css/main.23099824.css.map",
-    "main.b9aa6a31.js.map": "/myalamal/static/js/main.b9aa6a31.js.map"
+    "main.fdffa643.css.map": "/myalamal/static/css/main.fdffa643.css.map",
+    "main.d5af43a9.js.map": "/myalamal/static/js/main.d5af43a9.js.map"
   },
   "entrypoints": [
-    "static/css/main.23099824.css",
-    "static/js/main.b9aa6a31.js"
+    "static/css/main.fdffa643.css",
+    "static/js/main.d5af43a9.js"
   ]
 }
