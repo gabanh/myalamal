@@ -1,5 +1,6 @@
+// src/components/Navbar.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import NavDropdown from "./NavDropdown";
 
 export default function Navbar({ user, onLogout }) {
@@ -20,12 +21,14 @@ export default function Navbar({ user, onLogout }) {
     typeof document !== "undefined" &&
     document.documentElement.classList.contains("dark");
 
+  const BASE = import.meta.env.BASE_URL || "/";
+
   return (
     <header className="bg-white/90 dark:bg-night/80 backdrop-blur border-b border-wave/40 dark:border-white/10">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-        {/* לוגו/כותרת */}
+        {/* לוגו */}
         <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="logo" className="w-8 h-8" />
+          <img src={`${BASE}logo.svg`} alt="logo" className="w-8 h-8" />
           <h1 className="text-lg font-extrabold text-ocean dark:text-mist">
             مدرسة الأمل
           </h1>
@@ -33,61 +36,53 @@ export default function Navbar({ user, onLogout }) {
 
         {/* תפריט ניווט */}
         <nav className="flex items-center gap-2">
-          <Link to="/" className={linkCls("/")}>الرئيسية</Link>
+          <NavLink to="/" className={linkCls("/")}>الرئيسية</NavLink>
 
-          {/* תלמיד → طالب */}
-          {user.role === "طالب" && (
-            <Link to="/students" className={linkCls("/students")}>الطلاب</Link>
+          {user?.role === "طالب" && (
+            <NavLink to="/students" className={linkCls("/students")}>الطلاب</NavLink>
           )}
 
-          {/* מורה + הנהלה */}
-          {(user.role === "معلم" || user.role === "إدارة") && (
-            <Link to="/teachers" className={linkCls("/teachers")}>المعلمون</Link>
+          {(user?.role === "معلم" || user?.role === "إدارة") && (
+            <NavLink to="/teachers" className={linkCls("/teachers")}>المعلمون</NavLink>
           )}
 
-          {/* הנהלה בלבד */}
-          {user.role === "إدارة" && (
+          {user?.role === "إدارة" && (
             <>
-              <Link to="/management" className={linkCls("/management")}>الإدارة</Link>
-              <Link to="/admin" className={linkCls("/admin")}>لوحة الإدارة</Link>
+              <NavLink to="/management" className={linkCls("/management")}>الإدارة</NavLink>
+              <NavLink to="/admin" className={linkCls("/admin")}>لوحة الإدارة</NavLink>
             </>
           )}
 
-          <Link to="/contact" className={linkCls("/contact")}>اتصل بنا</Link>
+          <NavLink to="/contact" className={linkCls("/contact")}>اتصل بنا</NavLink>
 
-          {/* תפריט נפתח “المزيد” עם הרשאות לפי פריט */}
           <NavDropdown
             label="المزيد"
             user={user}
             items={[
-              { label: "المكتبة", to: "/library", icon: "📚" }, // לכולם
-              { label: "الأخبار", to: "/news", icon: "📰", allow: ["معلم","إدارة"] },
-              { label: "التقويم", to: "/calendar", icon: "📅", allow: ["طالب","معلم","إدارة"] }, // ← עודכן
-              { label: "البوابة الرسمية", href: "https://example.com", icon: "🌐", allow: ["إدارة"] }
+              { label: "المكتبة", to: "/library", icon: "📚" },
+              { label: "الأخبار", to: "/news", icon: "📰", allow: ["معلم", "إدارة"] },
+              { label: "التقويم", to: "/calendar", icon: "📅", allow: ["طالب", "معلم", "إدارة"] },
+              { label: "البوابة الرسمية", href: "https://example.com", icon: "🌐", allow: ["إدارة"] },
             ]}
           />
 
-          {/* קישור לרזנמה מהתפריט הראשי (אם הוספת) */}
-          <Link to="/school-calendar" className={linkCls("/school-calendar")}>
-            الرزنامة المدرسية
-          </Link>
+          {/* מוביל לעמוד החדש בתוך האתר */}
+          <NavLink to="/school-calendar" className={linkCls("/school-calendar")}>
+            📅 الرزنامة المدرسية
+          </NavLink>
         </nav>
 
-        {/* צד ימין: מתג מצב + שלום + יציאה */}
+        {/* צד ימין */}
         <div className="flex items-center gap-3">
           <button
             onClick={toggleTheme}
             className="px-3 py-2 rounded-lg border border-wave/40 dark:border-white/10 hover:bg-wave/30 dark:hover:bg-white/10 transition"
-            title="מצב יום/לילה"
-            aria-label="Theme toggle"
           >
             {isDark ? "☀️" : "🌙"}
           </button>
-
           <span className="text-sm text-ocean/70 dark:text-mist/70">
-            مرحباً، <b>{user.name || "مستخدم"}</b>
+            مرحباً، <b>{user?.name || "مستخدم"}</b>
           </span>
-
           <button
             onClick={onLogout}
             className="bg-ocean text-sand dark:bg-white/10 dark:text-mist px-3 py-2 rounded-lg hover:bg-skyblue dark:hover:bg-white/20 transition"

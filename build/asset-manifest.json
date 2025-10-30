@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/myalamal/static/css/main.fdffa643.css",
+    "main.js": "/myalamal/static/js/main.d5af43a9.js",
+    "index.html": "/myalamal/index.html",
+    "main.fdffa643.css.map": "/myalamal/static/css/main.fdffa643.css.map",
+    "main.d5af43a9.js.map": "/myalamal/static/js/main.d5af43a9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fdffa643.css",
+    "static/js/main.d5af43a9.js"
+  ]
+}

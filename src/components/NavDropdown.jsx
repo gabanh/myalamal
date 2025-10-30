@@ -1,63 +1,50 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-/**
- * Dropdown גנרי עם הרשאות:
- * items: [{ label, to? | href?, icon?, allow?: ["תلميذ","معلم","إدارة"] }]
- * אם allow לא קיים – הפריט מוצג לכולם.
- */
-export default function NavDropdown({ label = "المزيد", items = [], user }) {
+export default function NavDropdown({ label = "المزيد", user, items = [] }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
-    const close = (e) => {
+    const handleClick = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     };
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
   }, []);
 
-  const visibleItems = items.filter(
-    (it) => !it.allow || (user && it.allow.includes(user.role))
-  );
-
-  if (visibleItems.length === 0) return null;
+  const canSee = (it) => !it.allow || it.allow.includes(user?.role);
 
   return (
-    <div ref={ref} className="relative">
+    <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
         className="px-3 py-2 rounded-lg hover:bg-wave/40 dark:hover:bg-white/10"
       >
-        {label} ▾
+        {label}
       </button>
-
       {open && (
-        <div
-          className="absolute top-full right-0 mt-2 w-56 rounded-xl overflow-hidden shadow-lg
-                     bg-white dark:bg-night/90 border border-wave/40 dark:border-white/10 z-50"
-        >
-          {visibleItems.map((it, idx) =>
+        <div className="absolute right-0 mt-2 w-56 rounded-xl border border-wave/40 dark:border-white/10 bg-white dark:bg-night shadow-lg p-2 z-50">
+          {items.filter(canSee).map((it) =>
             it.to ? (
               <Link
-                key={idx}
+                key={it.label}
                 to={it.to}
-                className="block px-4 py-2 text-right hover:bg-wave/30 dark:hover:bg-white/10"
+                className="block px-3 py-2 rounded-lg hover:bg-wave/30 dark:hover:bg-white/10"
                 onClick={() => setOpen(false)}
               >
-                {it.icon} {it.label}
+                <span className="mr-1">{it.icon}</span> {it.label}
               </Link>
             ) : (
               <a
-                key={idx}
+                key={it.label}
                 href={it.href}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="block px-4 py-2 text-right hover:bg-wave/30 dark:hover:bg-white/10"
+                rel="noreferrer"
+                className="block px-3 py-2 rounded-lg hover:bg-wave/30 dark:hover:bg-white/10"
                 onClick={() => setOpen(false)}
               >
-                {it.icon} {it.label}
+                <span className="mr-1">{it.icon}</span> {it.label}
               </a>
             )
           )}

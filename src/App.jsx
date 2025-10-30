@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+// Pages
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
@@ -7,14 +9,14 @@ import Teachers from "./pages/Teachers";
 import Management from "./pages/Management";
 import Contact from "./pages/Contact";
 import AdminPanel from "./pages/AdminPanel";
-import Navbar from "./components/Navbar";
-import RequireRole from "./components/RequireRole";
-
-// דפים נוספים (אם יצרת אותם)
 import SchoolCalendar from "./pages/SchoolCalendar";
 import Library from "./pages/Library";
 import News from "./pages/News";
 import Calendar from "./pages/Calendar";
+
+// Components
+import Navbar from "./components/Navbar";
+import RequireRole from "./components/RequireRole";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -37,22 +39,18 @@ function App() {
   if (!user) return <Login onLogin={handleLogin} />;
 
   return (
-    <BrowserRouter>
+    <Router>
       <div className="min-h-screen bg-sand text-ocean dark:bg-night dark:text-mist transition-colors">
         <Navbar user={user} onLogout={handleLogout} />
         <div className="p-4 max-w-6xl mx-auto">
           <Routes>
-            {/* לכולם אחרי התחברות */}
             <Route path="/" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/school-calendar" element={<SchoolCalendar />} />
-
-            {/* דפים מה-dropdown */}
             <Route path="/library" element={<Library />} />
             <Route path="/news" element={<News />} />
             <Route path="/calendar" element={<Calendar />} />
 
-            {/* תלמיד ← طالب בלבד */}
             <Route
               path="/students"
               element={
@@ -62,7 +60,6 @@ function App() {
               }
             />
 
-            {/* מורה + הנהלה */}
             <Route
               path="/teachers"
               element={
@@ -72,7 +69,6 @@ function App() {
               }
             />
 
-            {/* הנהלה בלבד */}
             <Route
               path="/management"
               element={
@@ -81,6 +77,7 @@ function App() {
                 </RequireRole>
               }
             />
+
             <Route
               path="/admin"
               element={
@@ -90,12 +87,11 @@ function App() {
               }
             />
 
-            {/* ניתוב ברירת מחדל */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
 
