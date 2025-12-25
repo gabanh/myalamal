@@ -1,10 +1,3 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
-
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+import '@fullcalendar/core/index.global.css';
+import '@fullcalendar/daygrid/index.global.css';
+import '@fullcalendar/timegrid/index.global.css';
